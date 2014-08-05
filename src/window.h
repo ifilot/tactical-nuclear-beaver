@@ -37,7 +37,7 @@ private:
 	unsigned int width;
 	unsigned int height;
 	unsigned char* image;
-	GLuint tex;
+	std::vector<GLuint> textures;
 
 public:
 	Window();

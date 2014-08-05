@@ -24,6 +24,7 @@
 Window::Window() { 
 	this->width = 1024;
 	this->height = 768;
+	this->textures.resize(5);
 }
 
 int Window::create(int argc, char *argv[]) {
@@ -52,7 +53,8 @@ int Window::create(int argc, char *argv[]) {
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     glFrontFace(GL_CW);
-	this->tex = this->LoadTexture("images/sprites/beaver.png");
+	this->textures[0] = this->LoadTexture("images/sprites/beaver.png");
+	this->textures[1] = this->LoadTexture("images/sprites/stone_horizontal_tile.png");
 
 	while (!glfwWindowShouldClose(window)) {
         /* Render here */
@@ -107,7 +109,10 @@ void Window::draw_scene() {
 	glFrontFace(GL_CW);
 
 	// and let's draw
-	drawSprite(500,600,500,600,this->tex);
+	for(unsigned int i=0; i<25;i++) {
+		drawSprite(i*65,(i+1)*65,height-96,height,this->textures[1]);
+	}
+	drawSprite(500,600,height-96-100+5,height-96+5,this->textures[0]);
 	glFlush();
  }
 
