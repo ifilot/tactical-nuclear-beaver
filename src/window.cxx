@@ -24,7 +24,6 @@
 Window::Window() { 
 	this->width = 1024;
 	this->height = 768;
-	this->textures.resize(5);
 }
 
 int Window::create(int argc, char *argv[]) {
@@ -48,13 +47,8 @@ int Window::create(int argc, char *argv[]) {
 	glfwMakeContextCurrent(window);
 	glfwSetKeyCallback(window, key_callback);
 
-	// start loading textures here
-	glEnable(GL_TEXTURE_2D);
-    glEnable(GL_BLEND);
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-    glFrontFace(GL_CW);
-	this->textures[0] = this->LoadTexture("images/sprites/beaver.png");
-	this->textures[1] = this->LoadTexture("images/sprites/stone_horizontal_tile.png");
+	// load in the sprites
+	this->load_sprites();
 
 	while (!glfwWindowShouldClose(window)) {
         /* Render here */
@@ -109,10 +103,7 @@ void Window::draw_scene() {
 	glFrontFace(GL_CW);
 
 	// and let's draw
-	for(unsigned int i=0; i<25;i++) {
-		drawSprite(i*65,(i+1)*65,height-96,height,this->textures[1]);
-	}
-	drawSprite(500,600,height-96-100+5,height-96+5,this->textures[0]);
+	draw_sprites();
 	glFlush();
  }
 
@@ -138,42 +129,39 @@ void Window::error_callback(int error, const char* description) {
 	fputs(description, stderr);
 }
 
-GLuint Window::LoadTexture(std::string filename) {
-	GLuint tex_ID;
+void Window::draw_sprites() {
+		for(uint i=0; i<this->sprites.size(); i++) {
+			//Draw clockwise
+	    glColor3f(1.0, 1.0, 1.0);
+	    glBindTexture(GL_TEXTURE_2D, this->sprites[i]->get_texture());
 
-	tex_ID = SOIL_load_OGL_texture(
-			filename.c_str(),
-			SOIL_LOAD_AUTO,
-			SOIL_CREATE_NEW_ID,
-			SOIL_FLAG_POWER_OF_TWO
-			| SOIL_FLAG_MIPMAPS
-			| SOIL_FLAG_MULTIPLY_ALPHA
-			| SOIL_FLAG_COMPRESS_TO_DXT
-			| SOIL_FLAG_DDS_LOAD_DIRECT
-			//| SOIL_FLAG_INVERT_Y
-	);
+	    int left = this->sprites[i]->get_x();
+	    int right = this->sprites[i]->get_x() + this->sprites[i]->get_width();
+	    int top = this->sprites[i]->get_y() + this->sprites[i]->get_height();
+	    int bottom = this->sprites[i]->get_y();
 
-	if( tex_ID > 0 ) {
-		//std::cout << tex_ID << std::endl;
-		return tex_ID;
-	} else {
-		printf( "SOIL loading error: '%s'\n", SOIL_last_result());
-		return 0;
-	}
+	    glBegin(GL_QUADS);
+	    glTexCoord2i(1,1); glVertex2i(right , top);
+	    glTexCoord2i(1,0); glVertex2i(right , bottom);
+	    glTexCoord2i(0,0); glVertex2i(left , bottom);
+	    glTexCoord2i(0,1); glVertex2i(left , top);
+	    glEnd();
+		}
 }
 
+void Window::load_sprites() {
+	glEnable(GL_TEXTURE_2D);
+  glEnable(GL_BLEND);
+  glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+  glFrontFace(GL_CW);
 
-void Window::drawSprite(GLint left, GLint right, GLint bottom, 
-	GLint top, GLuint texture) {  
+  // load the main character
+  this->sprites.push_back(new Player());
 
-    //Draw clockwise
-    glColor3f(1.0, 1.0, 1.0);
-    glBindTexture(GL_TEXTURE_2D, texture);
-
-    glBegin(GL_QUADS);
-    glTexCoord2i(1,1); glVertex2i(right , top);
-    glTexCoord2i(1,0); glVertex2i(right , bottom);
-    glTexCoord2i(0,0); glVertex2i(left , bottom);
-    glTexCoord2i(0,1); glVertex2i(left , top);
-    glEnd();
+  // load the floor tiles
+  for(uint i=0; i<25; i++) {
+  	this->sprites.push_back(new Floor());
+  	this->sprites.back()->set_position(i*this->sprites.back()->get_width(), 
+  		this->height - this->sprites.back()->get_height());
+  }
 }

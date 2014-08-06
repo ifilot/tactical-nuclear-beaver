@@ -1,5 +1,5 @@
 /**************************************************************************
- *   window.h                                                             *
+ *   sprite.cxx                                                           *
  *                                                                        *
  *   Tactical Nuclear Beaver                                              *
  *                                                                        *
@@ -19,42 +19,67 @@
  *                                                                        *
  **************************************************************************/
 
-#ifndef _WINDOW_H
-#define _WINDOW_H
+#include "sprite.h"
 
-#include <GLFW/glfw3.h>
-#include <FTGL/ftgl.h>
-#include <SOIL/SOIL.h>
-#include <vector>
-#include <stdio.h>
-#include <unistd.h>
-#include <string>
-#include <sstream>
-#include <iostream>
+Sprite::Sprite() {
 
-#include "player.h"
-#include "floor.h"
+}
 
-class Window {
-private:
-	unsigned int width;
-	unsigned int height;
-	unsigned char* image;
-	std::vector<Sprite*> sprites;
+void Sprite::set_position(int _x, int _y) {
+	this->pos_x = _x;
+	this->pos_y = _y;
+}
 
-public:
-	Window();
-	int create(int argc, char *argv[]);
+const GLuint & Sprite::get_texture() {
+	return this->texture;
+}
 
-private:
-	void draw_canvas();
-	void draw_scene();
-	static void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods);
-	static void error_callback(int error, const char* description);
-	void write_text(uint _x, uint _y, std::string str, float fontsize, float r=0, float g=0, float b=0);
-	GLuint LoadTexture(std::string filename);
-	void draw_sprites();
-	void load_sprites();
-};  
+const int & Sprite::get_x() {
+	return this->pos_x;
+}
 
-#endif //_WINDOW_H
+const int & Sprite::get_y() {
+	return this->pos_y;
+}
+
+const int & Sprite::get_width() {
+	return this->img_width;
+}
+
+const int & Sprite::get_height() {
+	return this->img_height;
+}
+
+void Sprite::scale(const float &ratio) {
+	this->img_width *= ratio;
+	this->img_height *= ratio;
+}
+
+GLuint Sprite::LoadTexture(const char* filename) {
+	int channels = 0;
+
+	unsigned char* image = SOIL_load_image(
+		filename,
+		&this->img_width, &this->img_height, &channels,
+		SOIL_LOAD_AUTO
+	);
+
+	if(image == NULL) {
+		// FIXME: ADD ERROR MESSAGE HERE
+		return 0;
+	}
+
+	GLuint tex_2d =SOIL_create_OGL_texture(
+		image,
+		this->img_width, this->img_height, channels,
+	 	SOIL_CREATE_NEW_ID,
+	 	SOIL_FLAG_MIPMAPS | 
+	 	//SOIL_FLAG_INVERT_Y | 
+	 	SOIL_FLAG_NTSC_SAFE_RGB | 
+	 	SOIL_FLAG_COMPRESS_TO_DXT
+	);
+
+	SOIL_free_image_data(image);
+
+	return tex_2d;
+}

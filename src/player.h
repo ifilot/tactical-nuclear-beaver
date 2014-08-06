@@ -1,5 +1,5 @@
 /**************************************************************************
- *   window.h                                                             *
+ *   player.h                                                             *
  *                                                                        *
  *   Tactical Nuclear Beaver                                              *
  *                                                                        *
@@ -19,42 +19,17 @@
  *                                                                        *
  **************************************************************************/
 
-#ifndef _WINDOW_H
-#define _WINDOW_H
+#ifndef _PLAYER_H
+#define _PLAYER_H
 
-#include <GLFW/glfw3.h>
-#include <FTGL/ftgl.h>
-#include <SOIL/SOIL.h>
-#include <vector>
-#include <stdio.h>
-#include <unistd.h>
-#include <string>
-#include <sstream>
-#include <iostream>
+#include "character.h"
 
-#include "player.h"
-#include "floor.h"
-
-class Window {
+class Player: public Character {
 private:
-	unsigned int width;
-	unsigned int height;
-	unsigned char* image;
-	std::vector<Sprite*> sprites;
 
 public:
-	Window();
-	int create(int argc, char *argv[]);
+Player();
 
-private:
-	void draw_canvas();
-	void draw_scene();
-	static void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods);
-	static void error_callback(int error, const char* description);
-	void write_text(uint _x, uint _y, std::string str, float fontsize, float r=0, float g=0, float b=0);
-	GLuint LoadTexture(std::string filename);
-	void draw_sprites();
-	void load_sprites();
-};  
+};
 
-#endif //_WINDOW_H
+#endif // _PLAYER_H

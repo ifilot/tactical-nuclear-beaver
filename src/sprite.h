@@ -1,5 +1,5 @@
 /**************************************************************************
- *   window.h                                                             *
+ *   sprite.h                                                             *
  *                                                                        *
  *   Tactical Nuclear Beaver                                              *
  *                                                                        *
@@ -19,42 +19,38 @@
  *                                                                        *
  **************************************************************************/
 
-#ifndef _WINDOW_H
-#define _WINDOW_H
+#ifndef _SPRITE_H
+#define _SPRITE_H
 
 #include <GLFW/glfw3.h>
-#include <FTGL/ftgl.h>
 #include <SOIL/SOIL.h>
-#include <vector>
-#include <stdio.h>
-#include <unistd.h>
 #include <string>
-#include <sstream>
-#include <iostream>
+#include <stdio.h>
 
-#include "player.h"
-#include "floor.h"
+class Sprite{
+protected:
+	int pos_x;
+	int pos_y;
 
-class Window {
-private:
-	unsigned int width;
-	unsigned int height;
-	unsigned char* image;
-	std::vector<Sprite*> sprites;
+	int img_width;
+	int img_height;
+
+	bool moveable;
+	GLuint texture;
 
 public:
-	Window();
-	int create(int argc, char *argv[]);
+	Sprite();
+	void set_position(int _x, int _y);
+	const GLuint & get_texture();
+	const int & get_x();
+	const int & get_y();
+	const int & get_width();
+	const int & get_height();
 
-private:
-	void draw_canvas();
-	void draw_scene();
-	static void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods);
-	static void error_callback(int error, const char* description);
-	void write_text(uint _x, uint _y, std::string str, float fontsize, float r=0, float g=0, float b=0);
-	GLuint LoadTexture(std::string filename);
-	void draw_sprites();
-	void load_sprites();
-};  
+	void scale(const float &ratio);
 
-#endif //_WINDOW_H
+protected:
+	GLuint LoadTexture(const char* filename);
+};
+
+#endif // _SPRITE_H
