@@ -22,8 +22,8 @@
 #include "window.h"
 
 Window::Window() { 
-	this->width = 1024;
-	this->height = 768;
+	this->width = 800;
+	this->height = 600;
 	physics_engine = new PhysicsEngine();
 
 	// keep track of fps
@@ -138,18 +138,18 @@ void Window::key_callback(GLFWwindow* window, int key, int scancode, int action,
 	glfwSetWindowShouldClose(window, GL_TRUE);
 
 	std::vector<Sprite*>* sprites = reinterpret_cast<std::vector<Sprite*>*>(glfwGetWindowUserPointer(window));
-	if (key == GLFW_KEY_SPACE) {
+	if (glfwGetKey(window, GLFW_KEY_SPACE)) {
 		//std::cout << "SPACE IS PRESSED" << std::endl;
 		dynamic_cast<Player*>(sprites->at(0))->set_jumping(true);
 	}
 
-	if (key == GLFW_KEY_A) {
+	if (glfwGetKey(window, GLFW_KEY_A)) {
 		//std::cout << "A IS PRESSED" << std::endl;
 		dynamic_cast<Player*>(sprites->at(0))->set_running(true);
 		dynamic_cast<Player*>(sprites->at(0))->set_running_direction(DIRECTION_LEFT);
 	}
 
-	if (key == GLFW_KEY_D) {
+	if (glfwGetKey(window, GLFW_KEY_D)) {
 		//std::cout << "D IS PRESSED" << std::endl;
 		dynamic_cast<Player*>(sprites->at(0))->set_running(true);
 		dynamic_cast<Player*>(sprites->at(0))->set_running_direction(DIRECTION_RIGHT);
