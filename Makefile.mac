@@ -32,7 +32,7 @@ run: $(BINDIR)/$(EXEC)
 $(BINDIR)/$(EXEC): $(OBJ)
 	$(MPICC) -o $(BINDIR)/$(EXEC) $(OBJ) $(LDFLAGS)
 
-$(OBJDIR)/%.o: $(SRCDIR)/%.cxx
+$(OBJDIR)/%.o: $(SRCDIR)/%.cxx src/physics_constants.h
 	$(MPICC) -c -o $@ $< $(CFLAGS) $(DIRECTIVES)
 
 clean:

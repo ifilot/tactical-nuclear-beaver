@@ -28,33 +28,29 @@ Player::Player() {
 	this->scale(.5);
 	this->moveable = true;
 	this->apply_gravity = true;
-	this->jumping = false;
 	this->vx = 1;
 }
 
-void Player::set_jumping(bool _jumping) {
-	this->jumping = _jumping;
+void Player::status_set(uint _direction) {
+	this->status.set(_direction);
 }
 
-void Player::set_running(bool _running) {
-	this->running = _running;
+void Player::status_unset(uint _direction) {
+	this->status.reset(_direction);
 }
 
-void Player::set_running_direction(bool _direction) {
-	this->running_direction = _direction;
+const std::bitset<4> & Player::bitwise_status() const {
+	return status;
 }
 
 void Player::apply_user_forces() {
-	if(this->running) {
-		if(this->running_direction == DIRECTION_LEFT) {
-			this->add_force_x(-RUNNING_CONSTANT);
-		} else {
-			this->add_force_x(RUNNING_CONSTANT);
-		}
-		this->running = false;
+	if(this->status.test(STATUS_RUNNING_LEFT)) {
+		this->add_force_x(-RUNNING_CONSTANT);
 	}
-	if(this->jumping) {
+	if(this->status.test(STATUS_RUNNING_RIGHT)) {
+		this->add_force_x(RUNNING_CONSTANT);
+	}
+	if(this->status.test(STATUS_JUMPING) && !this->status.test(STATUS_OFFGROUND)) {
 		this->add_force_y(JUMPING_CONSTANT);
-		this->jumping = false;
 	}
 }

@@ -24,22 +24,22 @@
 
 #include "character.h"
 
-#define DIRECTION_LEFT 0
-#define DIRECTION_RIGHT 1
+#define STATUS_RUNNING_LEFT 0
+#define STATUS_RUNNING_RIGHT 1
+#define STATUS_JUMPING 2
+#define STATUS_OFFGROUND 3
 
 class Player: public Character {
 private:
-	bool jumping;
-	bool running;
-	bool running_direction;
+	std::bitset<4> status;
 
 public:
 	Player();
 
-	void set_jumping(bool _jumping);
-	void set_running(bool _jumping);
-	void set_running_direction(bool _direction);
+	void status_set(uint _direction);
+	void status_unset(uint _direction);
 	void apply_user_forces();
+	const std::bitset<4> & bitwise_status() const;
 };
 
 #endif // _PLAYER_H

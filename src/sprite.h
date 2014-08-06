@@ -73,6 +73,8 @@ public:
 	const float & get_y() const;
 	const float & get_vx() const;
 	const float & get_vy() const;
+	const float & get_fx() const;
+	const float & get_fy() const;
 	const int & get_width() const;
 	const int & get_height() const;
 	bool is_moveable() const;

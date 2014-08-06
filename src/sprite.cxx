@@ -94,6 +94,14 @@ const float & Sprite::get_vy() const {
 	return this->vy;
 }
 
+const float & Sprite::get_fx() const {
+	return this->fx;
+}
+
+const float & Sprite::get_fy() const {
+	return this->fy;
+}
+
 const int & Sprite::get_width() const {
 	return this->img_width;
 }

@@ -140,19 +140,21 @@ void Window::key_callback(GLFWwindow* window, int key, int scancode, int action,
 	std::vector<Sprite*>* sprites = reinterpret_cast<std::vector<Sprite*>*>(glfwGetWindowUserPointer(window));
 	if (glfwGetKey(window, GLFW_KEY_SPACE)) {
 		//std::cout << "SPACE IS PRESSED" << std::endl;
-		dynamic_cast<Player*>(sprites->at(0))->set_jumping(true);
+		dynamic_cast<Player*>(sprites->at(0))->status_set(STATUS_JUMPING);
+	} else {
+		dynamic_cast<Player*>(sprites->at(0))->status_unset(STATUS_JUMPING);
 	}
 
 	if (glfwGetKey(window, GLFW_KEY_A)) {
-		//std::cout << "A IS PRESSED" << std::endl;
-		dynamic_cast<Player*>(sprites->at(0))->set_running(true);
-		dynamic_cast<Player*>(sprites->at(0))->set_running_direction(DIRECTION_LEFT);
+		dynamic_cast<Player*>(sprites->at(0))->status_set(STATUS_RUNNING_LEFT);
+	} else {
+		dynamic_cast<Player*>(sprites->at(0))->status_unset(STATUS_RUNNING_LEFT);
 	}
 
 	if (glfwGetKey(window, GLFW_KEY_D)) {
-		//std::cout << "D IS PRESSED" << std::endl;
-		dynamic_cast<Player*>(sprites->at(0))->set_running(true);
-		dynamic_cast<Player*>(sprites->at(0))->set_running_direction(DIRECTION_RIGHT);
+		dynamic_cast<Player*>(sprites->at(0))->status_set(STATUS_RUNNING_RIGHT);
+	} else {
+		dynamic_cast<Player*>(sprites->at(0))->status_unset(STATUS_RUNNING_RIGHT);
 	}
 }
 
@@ -183,19 +185,19 @@ void Window::draw_sprites() {
 
 void Window::load_sprites() {
 	glEnable(GL_TEXTURE_2D);
-  glEnable(GL_BLEND);
-  glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-  glFrontFace(GL_CW);
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	glFrontFace(GL_CW);
 
-  // load the main character
-  this->sprites.push_back(new Player());
+	// load the main character
+	this->sprites.push_back(new Player());
 
-  // load the floor tiles
-  for(uint i=0; i<25; i++) {
-  	this->sprites.push_back(new Floor());
-  	this->sprites.back()->set_position(i*this->sprites.back()->get_width(), 
-  		0);
-  }
+	// load the floor tiles
+	for(uint i=0; i<25; i++) {
+		this->sprites.push_back(new Floor());
+		this->sprites.back()->set_position(i*this->sprites.back()->get_width(), 
+			0);
+	}
 }
 
 void Window::write_statistics() {
@@ -211,6 +213,13 @@ void Window::write_statistics() {
 	ss << "[Player velocity] (" << this->sprites[0]->get_vx() << "," <<
 			this->sprites[0]->get_vy() << ")";
 	this->write_text(0, 36, ss.str(), 12, -1, -1, -1);
+	ss.str("");
+	ss << "[Player force] (" << this->sprites[0]->get_fx() << "," <<
+			this->sprites[0]->get_fy() << ")";
+	this->write_text(0, 48, ss.str(), 12, -1, -1, -1);
+	ss.str("");
+	ss << "[Player status] " << dynamic_cast<Player*>(this->sprites[0])->bitwise_status();
+	this->write_text(0, 60, ss.str(), 12, -1, -1, -1);
 }
 
 void Window::calculate_fps() {

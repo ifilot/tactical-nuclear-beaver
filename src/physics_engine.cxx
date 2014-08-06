@@ -49,18 +49,22 @@ void PhysicsEngine::update_sprites() {
 }
 
 void PhysicsEngine::collission_detect() {
-	for(unsigned int i=0; i<this->sprites.size(); i++) {
-		// only perform this analysis for objects which are actually moving!
-		if(this->sprites[i]->is_moveable()) {
-			for(unsigned int j=i+1; j<this->sprites.size(); j++) {
-				float dx = this->calculate_dx(this->sprites[i], this->sprites[j]);
-				float dy = this->calculate_dy(this->sprites[i], this->sprites[j]);
+	// only perform this action for the player (no NPC installed yet)
+	uint i = 0;
+	bool collission = false;
+	for(unsigned int j=i+1; j<this->sprites.size(); j++) {
+		float dx = this->calculate_dx(this->sprites[i], this->sprites[j]);
+		float dy = this->calculate_dy(this->sprites[i], this->sprites[j]);
 
-				if(dx < 0 && dy < 0) {
-					this->sprites[i]->set_position(this->sprites[i]->get_x(), this->sprites[i]->get_y() - dy);
-				}
-			}
+		if(dx < 0 && dy < 0) {
+			this->sprites[i]->set_position(this->sprites[i]->get_x(), this->sprites[i]->get_y() - dy - 2);
+			collission = true;
 		}
+	}
+	if(collission) {
+		dynamic_cast<Player*>(this->sprites[i])->status_unset(STATUS_OFFGROUND);
+	} else {
+		dynamic_cast<Player*>(this->sprites[i])->status_set(STATUS_OFFGROUND);
 	}
 }
 
