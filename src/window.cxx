@@ -103,6 +103,7 @@ void Window::draw_scene() {
 	glFrontFace(GL_CW);
 
 	// and let's draw
+	update_sprites();
 	draw_sprites();
 	glFlush();
  }
@@ -137,8 +138,8 @@ void Window::draw_sprites() {
 
 	    int left = this->sprites[i]->get_x();
 	    int right = this->sprites[i]->get_x() + this->sprites[i]->get_width();
-	    int top = this->sprites[i]->get_y() + this->sprites[i]->get_height();
-	    int bottom = this->sprites[i]->get_y();
+	    int top = this->height - (this->sprites[i]->get_y() + this->sprites[i]->get_height());
+	    int bottom = this->height - (this->sprites[i]->get_y());
 
 	    glBegin(GL_QUADS);
 	    glTexCoord2i(1,1); glVertex2i(right , top);
@@ -146,6 +147,12 @@ void Window::draw_sprites() {
 	    glTexCoord2i(0,0); glVertex2i(left , bottom);
 	    glTexCoord2i(0,1); glVertex2i(left , top);
 	    glEnd();
+		}
+}
+
+void Window::update_sprites() {
+		for(uint i=0; i<this->sprites.size(); i++) {
+			this->sprites[i]->update();
 		}
 }
 
@@ -162,6 +169,6 @@ void Window::load_sprites() {
   for(uint i=0; i<25; i++) {
   	this->sprites.push_back(new Floor());
   	this->sprites.back()->set_position(i*this->sprites.back()->get_width(), 
-  		this->height - this->sprites.back()->get_height());
+  		0);
   }
 }

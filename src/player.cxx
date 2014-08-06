@@ -22,8 +22,11 @@
 #include "player.h"
 
 Player::Player() {
+	this->init(); // always load default values
 	this->set_position(500,500);
 	this->texture = this->LoadTexture("images/sprites/beaver.png");
 	this->scale(.5);
-	this->moveable = false;
+	this->moveable = true;
+	this->apply_gravity = true;
+	this->vx = 1;
 }

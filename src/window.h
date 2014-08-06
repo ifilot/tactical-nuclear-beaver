@@ -55,6 +55,7 @@ private:
 	GLuint LoadTexture(std::string filename);
 	void draw_sprites();
 	void load_sprites();
+	void update_sprites();
 };  
 
 #endif //_WINDOW_H

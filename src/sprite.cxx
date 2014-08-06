@@ -25,7 +25,15 @@ Sprite::Sprite() {
 
 }
 
-void Sprite::set_position(int _x, int _y) {
+void Sprite::init() {
+	this->vx = 0;
+	this->vy = 0;
+	this->fx = 0;
+	this->fy = 0;
+	this->visible = true;
+}
+
+void Sprite::set_position(float _x, float _y) {
 	this->pos_x = _x;
 	this->pos_y = _y;
 }
@@ -34,11 +42,11 @@ const GLuint & Sprite::get_texture() {
 	return this->texture;
 }
 
-const int & Sprite::get_x() {
+const float & Sprite::get_x() {
 	return this->pos_x;
 }
 
-const int & Sprite::get_y() {
+const float & Sprite::get_y() {
 	return this->pos_y;
 }
 
@@ -74,7 +82,7 @@ GLuint Sprite::LoadTexture(const char* filename) {
 		this->img_width, this->img_height, channels,
 	 	SOIL_CREATE_NEW_ID,
 	 	SOIL_FLAG_MIPMAPS | 
-	 	//SOIL_FLAG_INVERT_Y | 
+	 	SOIL_FLAG_INVERT_Y | 
 	 	SOIL_FLAG_NTSC_SAFE_RGB | 
 	 	SOIL_FLAG_COMPRESS_TO_DXT
 	);
@@ -82,4 +90,15 @@ GLuint Sprite::LoadTexture(const char* filename) {
 	SOIL_free_image_data(image);
 
 	return tex_2d;
+}
+
+void Sprite::update() {
+	if(apply_gravity) {
+		this->vy -= GRAVITY_CONSTANT * TIME_CONSTANT;
+	}
+	if(moveable) {
+		this->pos_x += this->vx * TIME_CONSTANT;
+		this->pos_y += this->vy * TIME_CONSTANT;
+		//std::cout << "Updating sprite " << pos_x << std::endl;
+	}
 }
