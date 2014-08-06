@@ -22,14 +22,13 @@
 #ifndef _SPRITE_H
 #define _SPRITE_H
 
-#define GRAVITY_CONSTANT 0.3f
-#define TIME_CONSTANT 1.0f
-
 #include <GLFW/glfw3.h>
 #include <SOIL/SOIL.h>
 #include <string>
 #include <stdio.h>
 #include <iostream>
+
+#include "physics_constants.h"
 
 class Sprite{
 protected:
@@ -53,18 +52,31 @@ protected:
 public:
 	// constructors and initialisers
 	Sprite();
+	virtual ~Sprite(){};
 	void init();
 
 	// setters
 	void set_position(float _x, float _y);
 	void scale(const float &ratio);
+	void add_force(const float &fx, const float &fy);
+	void add_force_x(const float &_fx);
+	void add_force_y(const float &_fy);
+	void set_velocity(const float &vx, const float &vy);
+	void set_velocity_x(const float &_vx);
+	void set_velocity_y(const float &_vy);
+	void reset_forces();
+	void feels_gravity(bool _gravity);
 
 	// getters
 	const GLuint & get_texture();
-	const float & get_x();
-	const float & get_y();
-	const int & get_width();
-	const int & get_height();
+	const float & get_x() const;
+	const float & get_y() const;
+	const float & get_vx() const;
+	const float & get_vy() const;
+	const int & get_width() const;
+	const int & get_height() const;
+	bool is_moveable() const;
+	bool is_pulled_by_gravity() const;
 
 	// other methods
 	void update();

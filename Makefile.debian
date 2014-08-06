@@ -1,7 +1,7 @@
 # set compiler and compile options
 EXEC = tnb
 MPICC = g++
-OPTS = -O0 -Wall -g
+OPTS = -O2 -Wall -g
 CFLAGS = $(OPTS) -I/usr/include/freetype2
 LDFLAGS = $(OPTS) -I/usr/local/include  -L/usr/local/lib -lglfw3 \
 	-lXrandr -lSOIL -lGLEW -lGL -lGLU -lX11 -lXxf86vm -lm -lpthread \

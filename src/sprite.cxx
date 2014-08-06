@@ -38,24 +38,76 @@ void Sprite::set_position(float _x, float _y) {
 	this->pos_y = _y;
 }
 
+void Sprite::add_force(const float &fx, const float &fy) {
+	this->add_force_x(fx);
+	this->add_force_y(fy);
+}
+
+void Sprite::add_force_x(const float &_fx) {
+	this->fx += _fx;
+}
+
+void Sprite::add_force_y(const float &_fy) {
+	this->fy += _fy;
+}
+
+void Sprite::set_velocity(const float &vx, const float &vy) {
+	this->set_velocity_x(vx);
+	this->set_velocity_y(vy);
+}
+
+void Sprite::set_velocity_x(const float &_vx) {
+	this->vx = _vx;
+}
+
+void Sprite::set_velocity_y(const float &_vy) {
+	this->vy = _vy;
+}
+
+void Sprite::feels_gravity(bool _gravity) {
+	this->apply_gravity = _gravity;
+}
+
+
+void Sprite::reset_forces() {
+	this->fx = 0.0f;
+	this->fy = 0.0f;
+}
+
 const GLuint & Sprite::get_texture() {
 	return this->texture;
 }
 
-const float & Sprite::get_x() {
+const float & Sprite::get_x() const {
 	return this->pos_x;
 }
 
-const float & Sprite::get_y() {
+const float & Sprite::get_y() const {
 	return this->pos_y;
 }
 
-const int & Sprite::get_width() {
+const float & Sprite::get_vx() const {
+	return this->vx;
+}
+
+const float & Sprite::get_vy() const {
+	return this->vy;
+}
+
+const int & Sprite::get_width() const {
 	return this->img_width;
 }
 
-const int & Sprite::get_height() {
+const int & Sprite::get_height() const {
 	return this->img_height;
+}
+
+bool Sprite::is_moveable() const {
+	return this->moveable;
+}
+
+bool Sprite::is_pulled_by_gravity() const {
+	return this->apply_gravity;
 }
 
 void Sprite::scale(const float &ratio) {
@@ -93,10 +145,12 @@ GLuint Sprite::LoadTexture(const char* filename) {
 }
 
 void Sprite::update() {
-	if(apply_gravity) {
-		this->vy -= GRAVITY_CONSTANT * TIME_CONSTANT;
-	}
 	if(moveable) {
+		// apply forces to velocity
+		this->vx += this->fx * TIME_CONSTANT;
+		this->vy += this->fy * TIME_CONSTANT;
+
+		// apply velocity to position
 		this->pos_x += this->vx * TIME_CONSTANT;
 		this->pos_y += this->vy * TIME_CONSTANT;
 		//std::cout << "Updating sprite " << pos_x << std::endl;

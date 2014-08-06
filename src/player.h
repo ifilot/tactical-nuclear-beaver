@@ -24,12 +24,22 @@
 
 #include "character.h"
 
+#define DIRECTION_LEFT 0
+#define DIRECTION_RIGHT 1
+
 class Player: public Character {
 private:
+	bool jumping;
+	bool running;
+	bool running_direction;
 
 public:
-Player();
+	Player();
 
+	void set_jumping(bool _jumping);
+	void set_running(bool _jumping);
+	void set_running_direction(bool _direction);
+	void apply_user_forces();
 };
 
 #endif // _PLAYER_H

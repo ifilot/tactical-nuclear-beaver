@@ -32,6 +32,7 @@
 #include <sstream>
 #include <iostream>
 
+#include "physics_engine.h"
 #include "player.h"
 #include "floor.h"
 
@@ -40,7 +41,15 @@ private:
 	unsigned int width;
 	unsigned int height;
 	unsigned char* image;
+	PhysicsEngine* physics_engine;
 	std::vector<Sprite*> sprites;
+
+	// couple of variables to track the fps
+	double t0_value;
+	int fps_frame_count;
+	double fps;
+	double current_time;
+	double time_interval;
 
 public:
 	Window();
@@ -55,7 +64,8 @@ private:
 	GLuint LoadTexture(std::string filename);
 	void draw_sprites();
 	void load_sprites();
-	void update_sprites();
+	void write_statistics();
+	void calculate_fps();
 };  
 
 #endif //_WINDOW_H

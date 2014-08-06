@@ -24,6 +24,13 @@
 Window::Window() { 
 	this->width = 1024;
 	this->height = 768;
+	physics_engine = new PhysicsEngine();
+
+	// keep track of fps
+	this->t0_value = glfwGetTime();
+	this->fps_frame_count = 0;
+	this->fps = 0;
+	this->time_interval = 0.2;
 }
 
 int Window::create(int argc, char *argv[]) {
@@ -45,10 +52,12 @@ int Window::create(int argc, char *argv[]) {
 	}
 
 	glfwMakeContextCurrent(window);
+	glfwSetWindowUserPointer(window, &sprites);
 	glfwSetKeyCallback(window, key_callback);
 
 	// load in the sprites
 	this->load_sprites();
+	this->physics_engine->set_sprites(this->sprites);
 
 	while (!glfwWindowShouldClose(window)) {
         /* Render here */
@@ -103,9 +112,13 @@ void Window::draw_scene() {
 	glFrontFace(GL_CW);
 
 	// and let's draw
-	update_sprites();
+	physics_engine->update_sprites();
 	draw_sprites();
 	glFlush();
+
+	// finally write statistics to screen
+	this->calculate_fps();
+	this->write_statistics();
  }
 
 void Window::write_text(uint _x, uint _y, std::string str, float fontsize, float r/*=0*/, float g/*=0*/, float b/*=0*/) {
@@ -123,6 +136,24 @@ void Window::write_text(uint _x, uint _y, std::string str, float fontsize, float
 void Window::key_callback(GLFWwindow* window, int key, int scancode, int action, int mods) {
 	if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
 	glfwSetWindowShouldClose(window, GL_TRUE);
+
+	std::vector<Sprite*>* sprites = reinterpret_cast<std::vector<Sprite*>*>(glfwGetWindowUserPointer(window));
+	if (key == GLFW_KEY_SPACE) {
+		//std::cout << "SPACE IS PRESSED" << std::endl;
+		dynamic_cast<Player*>(sprites->at(0))->set_jumping(true);
+	}
+
+	if (key == GLFW_KEY_A) {
+		//std::cout << "A IS PRESSED" << std::endl;
+		dynamic_cast<Player*>(sprites->at(0))->set_running(true);
+		dynamic_cast<Player*>(sprites->at(0))->set_running_direction(DIRECTION_LEFT);
+	}
+
+	if (key == GLFW_KEY_D) {
+		//std::cout << "D IS PRESSED" << std::endl;
+		dynamic_cast<Player*>(sprites->at(0))->set_running(true);
+		dynamic_cast<Player*>(sprites->at(0))->set_running_direction(DIRECTION_RIGHT);
+	}
 }
 
 // print all errors to standard error
@@ -150,12 +181,6 @@ void Window::draw_sprites() {
 		}
 }
 
-void Window::update_sprites() {
-		for(uint i=0; i<this->sprites.size(); i++) {
-			this->sprites[i]->update();
-		}
-}
-
 void Window::load_sprites() {
 	glEnable(GL_TEXTURE_2D);
   glEnable(GL_BLEND);
@@ -171,4 +196,32 @@ void Window::load_sprites() {
   	this->sprites.back()->set_position(i*this->sprites.back()->get_width(), 
   		0);
   }
+}
+
+void Window::write_statistics() {
+	this->write_text(0,0,"[Testing] Tactical Nuclear Beaver", 12, -1, -1, -1);
+	std::stringstream ss;
+	ss << "[Framerate] " << this->fps;
+	this->write_text(0, 12, ss.str(), 12, -1, -1, -1);
+	ss.str("");
+	ss << "[Player position] (" << this->sprites[0]->get_x() << "," <<
+			this->sprites[0]->get_y() << ")";
+	this->write_text(0, 24, ss.str(), 12, -1, -1, -1);
+	ss.str("");
+	ss << "[Player velocity] (" << this->sprites[0]->get_vx() << "," <<
+			this->sprites[0]->get_vy() << ")";
+	this->write_text(0, 36, ss.str(), 12, -1, -1, -1);
+}
+
+void Window::calculate_fps() {
+	current_time = glfwGetTime();
+
+	if ((this->current_time - this->t0_value) > this->time_interval) {
+		this->fps = (double)this->fps_frame_count / (this->current_time - this->t0_value);
+		this->fps_frame_count = 0;
+		this->t0_value = glfwGetTime();
+	}
+	else {
+		this->fps_frame_count++;
+	}
 }

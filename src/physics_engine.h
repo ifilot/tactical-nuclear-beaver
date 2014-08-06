@@ -23,8 +23,11 @@
 #define _PHYSICS_ENGINE_H
 
 #include <vector>
+#include <stdlib.h>
 
+#include "physics_constants.h"
 #include "sprite.h"
+#include "player.h"
 
 class PhysicsEngine{
 private:
@@ -32,6 +35,19 @@ private:
 
 public:
 	PhysicsEngine();
+	void reset_forces();
+	void apply_gravity();
+	void apply_friction();
+	void set_sprites(std::vector<Sprite*> _sprites);
+	void update_sprites();
+
+private:
+	void collission_detect();
+	bool does_collide(Sprite* a, Sprite* b);
+	float calculate_dx(Sprite* a, Sprite* b);
+	float calculate_dy(Sprite* a, Sprite* b);
+	float calculate_dx_next_timestep(Sprite* a, Sprite* b);
+	float calculate_dy_next_timestep(Sprite* a, Sprite* b);
 };
 
 #endif // _PHYSICS_ENGINE_H

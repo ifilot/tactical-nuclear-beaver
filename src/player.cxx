@@ -28,5 +28,33 @@ Player::Player() {
 	this->scale(.5);
 	this->moveable = true;
 	this->apply_gravity = true;
+	this->jumping = false;
 	this->vx = 1;
+}
+
+void Player::set_jumping(bool _jumping) {
+	this->jumping = _jumping;
+}
+
+void Player::set_running(bool _running) {
+	this->running = _running;
+}
+
+void Player::set_running_direction(bool _direction) {
+	this->running_direction = _direction;
+}
+
+void Player::apply_user_forces() {
+	if(this->running) {
+		if(this->running_direction == DIRECTION_LEFT) {
+			this->add_force_x(-RUNNING_CONSTANT);
+		} else {
+			this->add_force_x(RUNNING_CONSTANT);
+		}
+		this->running = false;
+	}
+	if(this->jumping) {
+		this->add_force_y(JUMPING_CONSTANT);
+		this->jumping = false;
+	}
 }
