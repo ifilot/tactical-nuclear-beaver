@@ -22,12 +22,15 @@
 #ifndef _PLAYER_H
 #define _PLAYER_H
 
+#include <bitset>
 #include "character.h"
 
 #define STATUS_RUNNING_LEFT 0
 #define STATUS_RUNNING_RIGHT 1
 #define STATUS_JUMPING 2
 #define STATUS_OFFGROUND 3
+
+typedef unsigned int uint;
 
 class Player: public Character {
 private:

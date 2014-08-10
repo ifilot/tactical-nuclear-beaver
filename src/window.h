@@ -36,6 +36,8 @@
 #include "player.h"
 #include "floor.h"
 
+#define KEYBOARD_INPUT false
+
 class Window {
 private:
 	unsigned int width;
@@ -66,6 +68,7 @@ private:
 	void load_sprites();
 	void write_statistics();
 	void calculate_fps();
+	void joystick_callback(GLFWwindow* window);
 };  
 
 #endif //_WINDOW_H

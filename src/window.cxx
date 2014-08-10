@@ -60,6 +60,9 @@ int Window::create(int argc, char *argv[]) {
 	this->physics_engine->set_sprites(this->sprites);
 
 	while (!glfwWindowShouldClose(window)) {
+		/* read input from joystick */
+		joystick_callback(window);
+
         /* Render here */
 		draw_scene();
 
@@ -137,24 +140,58 @@ void Window::key_callback(GLFWwindow* window, int key, int scancode, int action,
 	if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
 	glfwSetWindowShouldClose(window, GL_TRUE);
 
-	std::vector<Sprite*>* sprites = reinterpret_cast<std::vector<Sprite*>*>(glfwGetWindowUserPointer(window));
-	if (glfwGetKey(window, GLFW_KEY_SPACE)) {
-		//std::cout << "SPACE IS PRESSED" << std::endl;
-		dynamic_cast<Player*>(sprites->at(0))->status_set(STATUS_JUMPING);
-	} else {
-		dynamic_cast<Player*>(sprites->at(0))->status_unset(STATUS_JUMPING);
-	}
+	if(KEYBOARD_INPUT) {
+		std::vector<Sprite*>* sprites = reinterpret_cast<std::vector<Sprite*>*>(glfwGetWindowUserPointer(window));
 
-	if (glfwGetKey(window, GLFW_KEY_A)) {
-		dynamic_cast<Player*>(sprites->at(0))->status_set(STATUS_RUNNING_LEFT);
-	} else {
-		dynamic_cast<Player*>(sprites->at(0))->status_unset(STATUS_RUNNING_LEFT);
-	}
+		// grab data of the keyboard
+		if (glfwGetKey(window, GLFW_KEY_SPACE)) {
+			//std::cout << "SPACE IS PRESSED" << std::endl;
+			dynamic_cast<Player*>(sprites->at(0))->status_set(STATUS_JUMPING);
+		} else {
+			dynamic_cast<Player*>(sprites->at(0))->status_unset(STATUS_JUMPING);
+		}
 
-	if (glfwGetKey(window, GLFW_KEY_D)) {
-		dynamic_cast<Player*>(sprites->at(0))->status_set(STATUS_RUNNING_RIGHT);
-	} else {
-		dynamic_cast<Player*>(sprites->at(0))->status_unset(STATUS_RUNNING_RIGHT);
+		if (glfwGetKey(window, GLFW_KEY_A)) {
+			dynamic_cast<Player*>(sprites->at(0))->status_set(STATUS_RUNNING_LEFT);
+		} else {
+			dynamic_cast<Player*>(sprites->at(0))->status_unset(STATUS_RUNNING_LEFT);
+		}
+
+		if (glfwGetKey(window, GLFW_KEY_D)) {
+			dynamic_cast<Player*>(sprites->at(0))->status_set(STATUS_RUNNING_RIGHT);
+		} else {
+			dynamic_cast<Player*>(sprites->at(0))->status_unset(STATUS_RUNNING_RIGHT);
+		}
+	}
+}
+
+// exit the program when the ESC key is pressed
+void Window::joystick_callback(GLFWwindow* window) {
+	// grab data of the joystick
+	if(glfwJoystickPresent(GLFW_JOYSTICK_1)) {
+		int axes_count, buttons_count;
+		const float* axes = glfwGetJoystickAxes(GLFW_JOYSTICK_1, &axes_count);
+		const unsigned char* buttons = glfwGetJoystickButtons(GLFW_JOYSTICK_1, &buttons_count);
+		
+
+		if (buttons[1] > 0.5) {
+			//std::cout << "SPACE IS PRESSED" << std::endl;
+			dynamic_cast<Player*>(this->sprites.at(0))->status_set(STATUS_JUMPING);
+		} else {
+			dynamic_cast<Player*>(this->sprites.at(0))->status_unset(STATUS_JUMPING);
+		}
+
+		if (axes[4] < -0.5) {
+			dynamic_cast<Player*>(this->sprites.at(0))->status_set(STATUS_RUNNING_LEFT);
+		} else {
+			dynamic_cast<Player*>(this->sprites.at(0))->status_unset(STATUS_RUNNING_LEFT);
+		}
+
+		if (axes[4] > 0.5) {
+			dynamic_cast<Player*>(this->sprites.at(0))->status_set(STATUS_RUNNING_RIGHT);
+		} else {
+			dynamic_cast<Player*>(this->sprites.at(0))->status_unset(STATUS_RUNNING_RIGHT);
+		}
 	}
 }
 
