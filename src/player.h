@@ -23,6 +23,7 @@
 #define _PLAYER_H
 
 #include <bitset>
+#include <cmath>
 #include "character.h"
 
 #define STATUS_RUNNING_LEFT 0
@@ -35,6 +36,7 @@ typedef unsigned int uint;
 class Player: public Character {
 private:
 	std::bitset<4> status;
+	double jumptime;
 
 public:
 	Player();
@@ -43,6 +45,10 @@ public:
 	void status_unset(uint _direction);
 	void apply_user_forces();
 	const std::bitset<4> & bitwise_status() const;
+	void update();
+
+private:
+	int sign(const float &val) const;
 };
 
 #endif // _PLAYER_H

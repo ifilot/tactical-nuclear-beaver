@@ -36,7 +36,11 @@
 #include "player.h"
 #include "floor.h"
 
-#define KEYBOARD_INPUT false
+#define CONTROL_KEYBOARD 0
+#define CONTROL_JOYSTICK 1
+
+#define KEYDELAY_CHANGE_CONTROL 0
+#define KEYDELAY_CHANGE_CONTROL_DELAY 0.5
 
 class Window {
 private:
@@ -45,6 +49,8 @@ private:
 	unsigned char* image;
 	PhysicsEngine* physics_engine;
 	std::vector<Sprite*> sprites;
+	unsigned short control;
+	std::vector<double> keydelays;
 
 	// couple of variables to track the fps
 	double t0_value;
@@ -68,7 +74,8 @@ private:
 	void load_sprites();
 	void write_statistics();
 	void calculate_fps();
-	void joystick_callback(GLFWwindow* window);
+	void joystick_control(GLFWwindow* window);
+	void keyboard_control(GLFWwindow* window);
 };  
 
 #endif //_WINDOW_H

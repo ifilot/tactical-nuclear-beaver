@@ -50,7 +50,38 @@ void Player::apply_user_forces() {
 	if(this->status.test(STATUS_RUNNING_RIGHT)) {
 		this->add_force_x(RUNNING_CONSTANT);
 	}
-	if(this->status.test(STATUS_JUMPING) && !this->status.test(STATUS_OFFGROUND)) {
-		this->add_force_y(JUMPING_CONSTANT);
+	if(this->status.test(STATUS_JUMPING)) {
+		if(!this->status.test(STATUS_OFFGROUND)) {
+			this->jumptime = glfwGetTime();
+		}
+		double dt = glfwGetTime() - this->jumptime;
+		float force = JUMPING_CONSTANT - JUMP_DECAY_SPEED * dt;
+		this->add_force_y(force > 0 ? force : 0);
+	}
+}
+
+void Player::update() {
+	if(moveable) {
+		// apply forces to velocity
+		this->vx += this->fx * TIME_CONSTANT;
+		this->vy += this->fy * TIME_CONSTANT;
+
+		// apply velocity to position
+		this->pos_x += this->vx * TIME_CONSTANT;
+		this->pos_y += this->vy * TIME_CONSTANT;
+		//std::cout << "Updating sprite " << pos_x << std::endl;
+	}
+
+	this->vx = std::abs(this->vx) > TERMINAL_VELOCITY ? 
+		TERMINAL_VELOCITY * this->sign(this->vx) : this->vx;
+	this->vy = std::abs(this->vy) > TERMINAL_VELOCITY ? 
+		TERMINAL_VELOCITY * this->sign(this->vy): this->vy;
+}
+
+int Player::sign(const float &val) const {
+	if(val < 0) {
+		return -1;
+	} else {
+		return 1;
 	}
 }

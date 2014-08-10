@@ -31,6 +31,7 @@ Window::Window() {
 	this->fps_frame_count = 0;
 	this->fps = 0;
 	this->time_interval = 0.2;
+	this->control = CONTROL_KEYBOARD;
 }
 
 int Window::create(int argc, char *argv[]) {
@@ -51,6 +52,9 @@ int Window::create(int argc, char *argv[]) {
 		return -1;
 	}
 
+	// reset all key delays
+	this->keydelays.resize(1, glfwGetTime());
+
 	glfwMakeContextCurrent(window);
 	glfwSetWindowUserPointer(window, &sprites);
 	glfwSetKeyCallback(window, key_callback);
@@ -61,7 +65,8 @@ int Window::create(int argc, char *argv[]) {
 
 	while (!glfwWindowShouldClose(window)) {
 		/* read input from joystick */
-		joystick_callback(window);
+		joystick_control(window);
+		keyboard_control(window);
 
         /* Render here */
 		draw_scene();
@@ -139,8 +144,15 @@ void Window::write_text(uint _x, uint _y, std::string str, float fontsize, float
 void Window::key_callback(GLFWwindow* window, int key, int scancode, int action, int mods) {
 	if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
 	glfwSetWindowShouldClose(window, GL_TRUE);
+}
 
-	if(KEYBOARD_INPUT) {
+void Window::keyboard_control(GLFWwindow* window) {
+	if (glfwGetKey(window, GLFW_KEY_C) && (this->keydelays[KEYDELAY_CHANGE_CONTROL] < glfwGetTime() - KEYDELAY_CHANGE_CONTROL_DELAY)) {
+		this->control = 1 - this->control;
+		this->keydelays[KEYDELAY_CHANGE_CONTROL] = glfwGetTime();
+	}
+
+	if(this->control == CONTROL_KEYBOARD) {
 		std::vector<Sprite*>* sprites = reinterpret_cast<std::vector<Sprite*>*>(glfwGetWindowUserPointer(window));
 
 		// grab data of the keyboard
@@ -166,9 +178,9 @@ void Window::key_callback(GLFWwindow* window, int key, int scancode, int action,
 }
 
 // exit the program when the ESC key is pressed
-void Window::joystick_callback(GLFWwindow* window) {
+void Window::joystick_control(GLFWwindow* window) {
 	// grab data of the joystick
-	if(glfwJoystickPresent(GLFW_JOYSTICK_1)) {
+	if(glfwJoystickPresent(GLFW_JOYSTICK_1) && this->control == CONTROL_JOYSTICK) {
 		int axes_count, buttons_count;
 		const float* axes = glfwGetJoystickAxes(GLFW_JOYSTICK_1, &axes_count);
 		const unsigned char* buttons = glfwGetJoystickButtons(GLFW_JOYSTICK_1, &buttons_count);
@@ -257,6 +269,13 @@ void Window::write_statistics() {
 	ss.str("");
 	ss << "[Player status] " << dynamic_cast<Player*>(this->sprites[0])->bitwise_status();
 	this->write_text(0, 60, ss.str(), 12, -1, -1, -1);
+	ss.str("");
+	if(this->control == CONTROL_KEYBOARD) {
+		ss << "[INPUT] KEYBOARD";
+	} else {
+		ss << "[INPUT] JOYSTICK";
+	}
+	this->write_text(0, 72, ss.str(), 12, -1, -1, -1);
 }
 
 void Window::calculate_fps() {

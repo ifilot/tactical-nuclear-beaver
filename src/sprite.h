@@ -81,7 +81,7 @@ public:
 	bool is_pulled_by_gravity() const;
 
 	// other methods
-	void update();
+	virtual void update();
 
 protected:
 	GLuint LoadTexture(const char* filename);
