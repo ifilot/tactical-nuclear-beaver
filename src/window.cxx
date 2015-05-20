@@ -130,7 +130,7 @@ void Window::draw_scene() {
  }
 
 void Window::write_text(uint _x, uint _y, std::string str, float fontsize, float r/*=0*/, float g/*=0*/, float b/*=0*/) {
-	FTGLPixmapFont font("/usr/share/fonts/TTF/arial.ttf");
+	FTGLPixmapFont font("fonts/arial.ttf");
 	font.FaceSize(fontsize);
 	// hack to print black text
 	glPixelTransferf(GL_RED_BIAS, r);

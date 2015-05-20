@@ -1,9 +1,9 @@
 # set compiler and compile options
 EXEC = tnb
 MPICC = g++
-OPTS = -O2 -Wall -g
+OPTS = -O0 -Wall -g
 CFLAGS = $(OPTS) -I/usr/include/freetype2
-LDFLAGS = $(OPTS) `pkg-config --libs glfw3 glu ftgl --static` -lSOIL
+LDFLAGS = $(OPTS) -lSOIL `pkg-config --libs glfw3 ftgl --static`
 
 # set a list of directories
 INCDIR = ./src
